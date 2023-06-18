@@ -8,6 +8,7 @@ class mainChar:
     race: str
     hpTotal: int
     hpCurr: int
+    inventory: dict
 
     def __init__(self, name, race):
         self.name = name
@@ -66,8 +67,9 @@ class advEngEnv:
             "w": self.playerMove,
             "examine": self.examine
         }
-
-    ### THIS SECTION IS FOR MISC FUNCTIONS
+    ##########################################
+    ### THIS SECTION IS FOR MISC FUNCTIONS ###
+    ##########################################
 
     def formatRoomDesc(self, inputText):
         # Create list of items to highlight
@@ -94,9 +96,11 @@ class advEngEnv:
         formattedText = f"\033[47;30;1m{formattedText}\033[0m"
 
         return formattedText
-        
-    ### THIS IS THE COMMAND SECTION
     
+    ###################################     
+    ### THIS IS THE COMMAND SECTION ###
+    ###################################
+
     def showHelp(self):
         self.name = "help"
         self.helpFile = "Lists all available commands."
