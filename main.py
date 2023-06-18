@@ -18,13 +18,13 @@ def main():
 
         #create environment
         worldEnv = advEngEnv(player, locations_file)
+        
     elif startInput == "load":
         #pickle shit here
         saveFile = input("Enter the name of the file you would like to load: ")
         
         with open(saveFile, 'rb') as file:
             worldEnv = pickle.load(file)
-        pass
 
     
     # input loop
