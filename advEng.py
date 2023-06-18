@@ -29,13 +29,13 @@ class location:
     locTitle: str
     locDesc: str
     locExits: dict
-    locItems: dict
+    locFeatures: dict
 
-    def __init__(self, title, desc, exits, items):
+    def __init__(self, title, desc, exits, features):
         self.locTitle = title
         self.locDesc = desc
         self.locExits = exits
-        self.locItems = items
+        self.locFeatures = features
         
 
 class advEngEnv:
@@ -76,8 +76,8 @@ class advEngEnv:
         highlightList = []
 
         # Populate it with the item names from the locItems 
-        for item in self.currentLoc.locItems:
-            for key in item.keys():
+        for feature in self.currentLoc.locFeatures:
+            for key in feature.keys():
                 highlightList.append(key)
         
         formattedText = ""
@@ -158,7 +158,7 @@ class advEngEnv:
         #Create list of items in the room to examine
         itemList = []
 
-        for item in self.currentLoc.locItems:
+        for item in self.currentLoc.locFeatures:
             for key in item.keys():
                 itemList.append(key)
 
@@ -168,7 +168,7 @@ class advEngEnv:
             print("What would you like to examine?")
         else:
             if self.userParams[0] in itemList:
-                print(self.currentLoc.locItems[0][self.userParams[0]][0]['itemDesc'])
+                print(self.currentLoc.locFeatures[0][self.userParams[0]][0]['featureDesc'])
             else:
                 print("I don't see that item here!")
         pass

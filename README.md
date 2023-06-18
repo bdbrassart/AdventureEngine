@@ -7,3 +7,14 @@ I was inspired by MUDs liek Gemstone, DragonRealms, and Aardwolf, and while I re
 Maybe eventually you could create a Front End for "dungeon creation" the simplify entry of locations etc...
 
 Primarily it's an excuse to practice python.  I find it a lot easier to learn/play with code if I have an end goal.  I also wanted to get better at understanding classes and other aspects of object oriented programming.
+
+Here's some terminology:
+
+location == room
+
+locations are defined in "locations.json" and include multiple parts, including title, description, and features.
+
+feature == part of a location that is permanent to the location
+
+item == something you can take with you from the room.  Items are defined in 'items.json'
+
