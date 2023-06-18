@@ -18,14 +18,22 @@ def main():
     while True:
         userInput = input(player.name + " || " + str(player.hpCurr) + "//" + str(player.hpTotal) + " HP> ")
 
+        # Lower all that shit
+        userInput = userInput.lower()
+        
+        # Split the input into a command and parameters.  This creates the cmd variable with just the first item, then the remainder are parameters
+        inputList = userInput.split(" ")
+        userCmd = inputList.pop(0)
+
         # This runs the command functions if it matches
-        if userInput in worldEnv.commands:
-            worldEnv.userInput = userInput
-            command = worldEnv.commands[userInput]
+        if userCmd in worldEnv.commands:
+            worldEnv.userCmd = userCmd
+            worldEnv.userParams = inputList
+            command = worldEnv.commands[userCmd]
             command()
-        elif userInput.lower() == "exit":
+        elif userCmd.lower() == "exit":
             break
-        elif userInput == "":
+        elif userCmd == "":
             pass
         else:
             print("Command not found!")
