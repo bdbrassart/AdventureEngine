@@ -1,26 +1,42 @@
 from advEng import *
+import pickle
 
 def main():
 
-    #load player
-    player = mainChar("Bedail", "Human")
+    # We need to prompt the player if they want to start fresh, or load a save.
 
-    #load locations
-    locations_file = "locations.json"
+    startPrompt = "Welcome to AdventureEngine.  Would you like to start a new game or load a save?  Enter 'new' or 'load': "
 
-    #create environment
-    worldEnv = advEngEnv(player, locations_file)
+    startInput = input(startPrompt)
+
+    if startInput == "new":
+        #load player
+        player = mainChar("Bedail", "Human")
+
+        #load locations
+        locations_file = "locations.json"
+
+        #create environment
+        worldEnv = advEngEnv(player, locations_file)
+    elif startInput == "load":
+        #pickle shit here
+        saveFile = input("Enter the name of the file you would like to load: ")
+        
+        with open(saveFile, 'rb') as file:
+            worldEnv = pickle.load(file)
+        pass
+
     
     # input loop
     
     worldEnv.playerLook()
 
     while True:
-        userInput = input(player.name + " || " + str(player.hpCurr) + "//" + str(player.hpTotal) + " HP> ")
+        userInput = input(worldEnv.player.name + " || " + str(worldEnv.player.hpCurr) + "//" + str(worldEnv.player.hpTotal) + " HP> ")
 
         # Lower all that shit
         userInput = userInput.lower()
-        
+
         # Split the input into a command and parameters.  This creates the cmd variable with just the first item, then the remainder are parameters
         inputList = userInput.split(" ")
         userCmd = inputList.pop(0)
@@ -32,6 +48,13 @@ def main():
             command = worldEnv.commands[userCmd]
             command()
         elif userCmd.lower() == "exit":
+            #pickle save shit
+            savePrompt = input("Would you like to save? (y/n): ")
+            if savePrompt == "y":
+                filePrompt = input("Enter the name of your save file: ")
+
+                with open(filePrompt, 'wb') as file:
+                    pickle.dump(worldEnv, file)
             break
         elif userCmd == "":
             pass
