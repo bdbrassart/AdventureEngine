@@ -33,14 +33,17 @@ class advEngEnv:
         }
         
     def showHelp(self):
+        self.name = "help"
         self.helpFile = "Lists all available commands."
         print("This is the help command")
     
     def playerLook(self):
+        self.name = "look"
         self.helpfile = "Look around the area."
         print("This is the look command")
 
     def playerSit(self):
+        self.name = "sit"
         self.helpfile = "Sit down."
         print("This is the sit command")
 
