@@ -79,7 +79,7 @@ class advEngEnv:
     ### THIS SECTION IS FOR MISC FUNCTIONS ###
     ##########################################
 
-    def formatRoomDesc(self, inputText):
+    def formatLocDesc(self, locDesc):
         # Create list of items to highlight
         highlightList = []
 
@@ -90,7 +90,7 @@ class advEngEnv:
         
         formattedText = ""
 
-        for word in inputText.split():
+        for word in locDesc.split():
             if word in highlightList:
                 formattedText += f"\033[33m{word}\033[0m " # Apply the highlighting to the word
             else: 
@@ -98,21 +98,33 @@ class advEngEnv:
             
         return formattedText.strip()
     
-    def formatRoomTitle(self, inputText):
-        formattedText = inputText.center(len(inputText) + 4)
+    def formatLocTitle(self, locTitle):
+        formattedText = locTitle.center(len(locTitle) + 4)
 
         formattedText = f"\033[47;30;1m{formattedText}\033[0m"
 
         return formattedText
     
+    def formatLocItems(self, locItems):
+        locItemsStr = ', '.join(item['itemName'] for item in locItems)
+        formattedText = f"\033[1mYou also see: \033[0m{locItemsStr}"
+        
+        return formattedText
+    
+    def formatLocExits(self, locExits):
+        locExitsStr = ', '.join(key for item in locExits for key in item.keys())
+        formattedText = f"\033[1mExits: \033[0m{locExitsStr}"
+
+        return formattedText
+    
     def getItemsByLoc(self, itemLoc):
         itemList = []
-
+        
         for items in self.items.values():
             for item in items:
-                if 'itemLoc' in item and item['itemLoc'] == itemLoc:
-                    itemID = list(item.keys())[0]
-                    itemList[itemID] = item
+                if item['itemLoc'] == self.player.locID:
+                    print(item['itemName'])
+                    itemList.append(item)
 
         return itemList
 
@@ -141,19 +153,19 @@ class advEngEnv:
         locDesc = self.locations[self.player.locID][0]['locDesc']
         locFeatures = self.locations[self.player.locID][0]['locFeatures']
         locExits = self.locations[self.player.locID][0]['locExits']
-        locExitsStr = ', '.join(key for item in locExits for key in item.keys())
 
         # pull items from item data
 
-        print(self.getItemsByLoc(self.player.locID))
+        locItems = self.getItemsByLoc(self.player.locID)
 
-        self.currentLoc = location(locTitle, locDesc, locExits, locFeatures, self.items)
+        self.currentLoc = location(locTitle, locDesc, locExits, locFeatures, locItems)
 
         # Format things prettily
         print("\n")
-        print(self.formatRoomTitle(self.currentLoc.locTitle))
-        print(self.formatRoomDesc(self.currentLoc.locDesc))
-        print("\033[1mExits: \033[0m" + locExitsStr)
+        print(self.formatLocTitle(self.currentLoc.locTitle))
+        print(self.formatLocDesc(self.currentLoc.locDesc))
+        print(self.formatLocItems(self.currentLoc.locItems))
+        print(self.formatLocExits(self.currentLoc.locExits))
         print("\n")
         
 
