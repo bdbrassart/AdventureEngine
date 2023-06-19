@@ -14,15 +14,10 @@ def main():
         player = mainChar("Bedail", "Human")
 
         #load locations
-        locationsFile = "locations.json"
-
-        #load items
-        itemsFile = "items.json"
+        locations_file = "locations.json"
 
         #create environment
         worldEnv = advEngEnv(player, locationsFile, itemsFile)
-
-        worldEnv.loadLocations(locationsFile)
         
     elif startInput == "load":
         #pickle shit here
