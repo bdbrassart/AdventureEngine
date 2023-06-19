@@ -29,7 +29,6 @@ def main():
         with open(saveFile, 'rb') as file:
             worldEnv = pickle.load(file)
 
-    
     # input loop
     
     worldEnv.playerLook()

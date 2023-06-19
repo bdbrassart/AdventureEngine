@@ -1,6 +1,7 @@
 {
     "itemID_1": [
         {
+            "itemID": "itemID_1",
             "itemLoc": "locID_1",
             "itemName": "a gold pocket-watch",
             "itemAlias": "watch",
@@ -11,6 +12,7 @@
     ],
     "itemID_2": [
         {
+            "itemID": "itemID_2",
             "itemLoc": "locID_1",
             "itemName": "a piece of paper",
             "itemAlias": "paper",
@@ -21,6 +23,7 @@
     ],
     "itemID_3": [
         {
+            "itemID": "itemID_3",
             "itemLoc": "locID_1",
             "itemName": "a silver necklace",
             "itemAlias": "necklace",
@@ -31,6 +34,7 @@
     ],
     "itemID_4": [
         {
+            "itemID": "itemID_4",
             "itemLoc": "locID_2",
             "itemName": "a leather journal",
             "itemAlias": "journal",

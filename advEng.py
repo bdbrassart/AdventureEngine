@@ -1,5 +1,6 @@
 
 import json
+
 # Collection of classes for "Adventure Engine"
 # please use camelcase
 
@@ -25,20 +26,40 @@ class mainChar:
 class location:
 
     #location class that stores information about the current location, so the JSON does not have to be constantly parsed and reparsed.  Populated by the "playerLook" function.
-
+    locID: str
     locTitle: str
     locDesc: str
     locExits: dict
     locFeatures: dict
-    locItems: dict
+    locItems: list
 
-    def __init__(self, title, desc, exits, features, items):
-        self.locTitle = title
-        self.locDesc = desc
-        self.locExits = exits
-        self.locFeatures = features
-        self.locItems = items
-        
+    def __init__(self, loc):
+
+        self.locID = loc[0]['locID']
+        self.locTitle = loc[0]['locTitle']
+        self.locDesc = loc[0]['locDesc']
+        self.locExits = loc[0]['locExits']
+        self.locFeatures = loc[0]['locFeatures']
+
+class invItem:
+
+    # item class that stores info about items
+    itemID: str
+    itemLoc: str
+    itemName: str
+    itemAlias: str
+    itemSize: str
+    itemDesc: str
+    itemSecret: str
+
+    def __init__(self, item):
+        self.itemID = item[0]['itemID']
+        self.itemLoc = item[0]['itemLoc']
+        self.itemName = item[0]['itemName']
+        self.itemAlias = item[0]['itemAlias']
+        self.itemSize = item[0]['itemSize']
+        self.itemDesc = item[0]['itemDesc']
+        self.itemSecret = item[0]['itemSecret']
 
 class advEngEnv:
     player: mainChar
@@ -47,19 +68,17 @@ class advEngEnv:
     userParams: list
     activeLoc: location
     items: dict
-    locations: list
+    locations: dict
 
     def __init__(self, player, locations, items):
         # Load the player
         self.player = player
         
         # Load the locations files
-        with open(locations, 'r') as file:
-            self.locations = json.load(file)
+        self.locations = self.loadLocations(locations)
 
         # Load the items files
-        with open(items, 'r') as file:
-            self.items = json.load(file)
+        self.items = self.loadItems(items)
 
         # set the params so it's not empty
         self.userParams = []
@@ -106,7 +125,7 @@ class advEngEnv:
         return formattedText
     
     def formatLocItems(self, locItems):
-        locItemsStr = ', '.join(item['itemName'] for item in locItems)
+        locItemsStr = ', '.join([item.itemName for item in locItems.values()])
         formattedText = f"\033[1mYou also see: \033[0m{locItemsStr}"
         
         return formattedText
@@ -117,27 +136,47 @@ class advEngEnv:
 
         return formattedText
     
-    def getItemsByLoc(self, itemLoc):
-        itemList = []
+    def getItemsByLoc(self, currentLoc):
+        itemList = {}
         
-        for items in self.items.values():
-            for item in items:
-                if item['itemLoc'] == self.player.locID:
-                    print(item['itemName'])
-                    itemList.append(item)
+        for itemID, itemDetails in self.items.items():
+            if itemDetails.itemLoc == currentLoc:
+                itemList[itemID] = itemDetails
 
         return itemList
 
     def loadLocations(self, jsonFile):
 
         # Create the list variable to hold the location objects
-        envLocations = []
+        envLocations = {}
 
         # Load the locations files
         with open(jsonFile, 'r') as file:
             locations = json.load(file)
-            for loc in locations:
-                print(loc)
+
+        # iterate thru the provided locations and create the list of location items
+        for locID, locDetails in locations.items():
+            loc = location(locDetails)
+            envLocations[locID] = loc
+
+        return envLocations
+    
+    def loadItems(self, jsonFile):
+
+        # Create the list variable to hold the location objects
+        envItems = {}
+
+        # Load the locations files
+        with open(jsonFile, 'r') as file:
+            items = json.load(file)
+
+        # iterate thru the provided locations and create the list of location items
+        for itemID, itemDetails in items.items():
+            itm = invItem(itemDetails)
+            envItems[itemID] = itm
+
+        return envItems
+                
         
 
 
@@ -162,22 +201,23 @@ class advEngEnv:
 
         # Pull info from locations data
         
-        locTitle = self.locations[self.player.locID][0]['locTitle']
-        locDesc = self.locations[self.player.locID][0]['locDesc']
-        locFeatures = self.locations[self.player.locID][0]['locFeatures']
-        locExits = self.locations[self.player.locID][0]['locExits']
+        #locTitle = self.locations[self.player.locID][0]['locTitle']
+        #locDesc = self.locations[self.player.locID][0]['locDesc']
+        #locFeatures = self.locations[self.player.locID][0]['locFeatures']
+        #locExits = self.locations[self.player.locID][0]['locExits']
 
         # pull items from item data
-
         locItems = self.getItemsByLoc(self.player.locID)
 
-        self.currentLoc = location(locTitle, locDesc, locExits, locFeatures, locItems)
+        self.currentLoc = self.locations[self.player.locID]
 
         # Format things prettily
         print("\n")
         print(self.formatLocTitle(self.currentLoc.locTitle))
         print(self.formatLocDesc(self.currentLoc.locDesc))
-        print(self.formatLocItems(self.currentLoc.locItems))
+        print(self.formatLocItems(locItems))
+        #print(self.getItemsByLoc(self.currentLoc.locID))
+
         print(self.formatLocExits(self.currentLoc.locExits))
         print("\n")
         
