@@ -30,12 +30,14 @@ class location:
     locDesc: str
     locExits: dict
     locFeatures: dict
+    locItems: dict
 
-    def __init__(self, title, desc, exits, features):
+    def __init__(self, title, desc, exits, features, items):
         self.locTitle = title
         self.locDesc = desc
         self.locExits = exits
         self.locFeatures = features
+        self.locItems = items
         
 
 class advEngEnv:
@@ -44,14 +46,20 @@ class advEngEnv:
     userCmd: str
     userParams: list
     activeLoc: location
+    items: dict
+    locations: dict
 
-    def __init__(self, player, locations):
+    def __init__(self, player, locations, items):
         # Load the player
         self.player = player
         
         # Load the locations files
         with open(locations, 'r') as file:
             self.locations = json.load(file)
+
+        # Load the items files
+        with open(items, 'r') as file:
+            self.items = json.load(file)
 
         # set the params so it's not empty
         self.userParams = []
@@ -97,6 +105,17 @@ class advEngEnv:
 
         return formattedText
     
+    def getItemsByLoc(self, itemLoc):
+        itemList = []
+
+        for items in self.items.values():
+            for item in items:
+                if 'itemLoc' in item and item['itemLoc'] == itemLoc:
+                    itemID = list(item.keys())[0]
+                    itemList[itemID] = item
+
+        return itemList
+
     ###################################     
     ### THIS IS THE COMMAND SECTION ###
     ###################################
@@ -120,11 +139,15 @@ class advEngEnv:
         
         locTitle = self.locations[self.player.locID][0]['locTitle']
         locDesc = self.locations[self.player.locID][0]['locDesc']
-        locItems = self.locations[self.player.locID][0]['locItems']
+        locFeatures = self.locations[self.player.locID][0]['locFeatures']
         locExits = self.locations[self.player.locID][0]['locExits']
         locExitsStr = ', '.join(key for item in locExits for key in item.keys())
 
-        self.currentLoc = location(locTitle, locDesc, locExits, locItems)
+        # pull items from item data
+
+        print(self.getItemsByLoc(self.player.locID))
+
+        self.currentLoc = location(locTitle, locDesc, locExits, locFeatures, self.items)
 
         # Format things prettily
         print("\n")
