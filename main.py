@@ -14,8 +14,11 @@ def main():
         player = mainChar("Bedail", "Human")
 
         #load locations
-        locations_file = "locations.json"
+        locationsFile = "locations.json"
 
+        #load items
+        itemsFile = "items.json"
+        
         #create environment
         worldEnv = advEngEnv(player, locationsFile, itemsFile)
         
