@@ -21,6 +21,8 @@ def main():
 
         #create environment
         worldEnv = advEngEnv(player, locationsFile, itemsFile)
+
+        worldEnv.loadLocations(locationsFile)
         
     elif startInput == "load":
         #pickle shit here

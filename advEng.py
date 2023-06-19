@@ -47,7 +47,7 @@ class advEngEnv:
     userParams: list
     activeLoc: location
     items: dict
-    locations: dict
+    locations: list
 
     def __init__(self, player, locations, items):
         # Load the player
@@ -115,6 +115,19 @@ class advEngEnv:
                     itemList[itemID] = item
 
         return itemList
+
+    def loadLocations(self, jsonFile):
+
+        # Create the list variable to hold the location objects
+        envLocations = []
+
+        # Load the locations files
+        with open(jsonFile, 'r') as file:
+            locations = json.load(file)
+            for loc in locations:
+                print(loc)
+        
+
 
     ###################################     
     ### THIS IS THE COMMAND SECTION ###
