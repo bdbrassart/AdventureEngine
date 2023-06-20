@@ -1,0 +1,46 @@
+{
+    "itemID_1": [
+        {
+            "itemID": "itemID_1",
+            "itemLoc": "locID_1",
+            "itemName": "a gold pocket-watch",
+            "itemAlias": "watch",
+            "itemSize": "small",
+            "itemDesc": "The small gold-colored pocket-watch has engraved scrollwork on the back.",
+            "itemSecret": "Upon further inspection, you find that the back of the watch opens to reveal an inscription \"B. D. B.\""
+        }
+    ],
+    "itemID_2": [
+        {
+            "itemID": "itemID_2",
+            "itemLoc": "locID_1",
+            "itemName": "a piece of paper",
+            "itemAlias": "paper",
+            "itemSize": "small",
+            "itemDesc": "The piece of paper looks blank.",
+            "itemSecret": "Upon further inspection, you can see faint writing if you hold it up to the light."
+        }
+    ],
+    "itemID_3": [
+        {
+            "itemID": "itemID_3",
+            "itemLoc": "locID_1",
+            "itemName": "a silver necklace",
+            "itemAlias": "necklace",
+            "itemSize": "medium",
+            "itemDesc": "The silver necklace is adorned with a pendant.",
+            "itemSecret": ""
+        }
+    ],
+    "itemID_4": [
+        {
+            "itemID": "itemID_4",
+            "itemLoc": "locInventory",
+            "itemName": "a leather journal",
+            "itemAlias": "journal",
+            "itemSize": "small",
+            "itemDesc": "The leather journal is filled with handwritten pages.",
+            "itemSecret": ""
+        }
+    ]
+}

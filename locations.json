@@ -1,18 +1,19 @@
 {
     "locID_1": [
         {
+            "locID": "locID_1",
             "locTitle": "The Grand Foyer",
             "locDesc": "Stepping into the foyer of your ancestral manor, a sense of awe washes over you. Exquisite craftsmanship adorns the space, from the intricately carved wooden door to the sweeping staircase that curves gracefully upward. Sunlight streams through stained glass windows, casting colorful patterns on the marble floors. The air is filled with the subtle fragrance of fresh flowers arranged on an antique console table, and a gleaming crystal chandelier bathes the foyer in a warm, ethereal glow. Reflecting in the ornate mirrors, you can't help but feel a connection to the generations that have come before you, as the foyer stands as a testament to the timeless elegance and grandeur of your family's legacy.",
-            "locItems": [
+            "locFeatures": [
                 {
                     "flowers": [
                         {
-                         "itemDesc": "The flowers are a mixture of poppies, irises, and daffodils."   
+                         "featureDesc": "The flowers are a mixture of poppies, irises, and daffodils."   
                         }
                     ],
                     "staircase": [
                         {
-                         "itemDesc": "It's the most bitchen staircase you've ever seen!"   
+                         "featureDesc": "It's the most bitchen staircase you've ever seen!"   
                         }
                     ]
                 }
@@ -28,9 +29,10 @@
     ],
     "locID_2": [
         {
+            "locID": "locID_2",
             "locTitle": "The Dining Room",
             "locDesc": "Entering the dining room, an air of sophistication and grandeur envelops you. The walls are adorned with opulent tapestries depicting pastoral scenes, while ornate wooden paneling showcases intricate craftsmanship. A long, polished mahogany dining table takes center stage, adorned with exquisite silverware, fine china, and sparkling crystal glasses. The flickering candlelight from the elegant chandeliers casts a warm glow, illuminating the room's richly patterned carpet. A grand fireplace, adorned with gilded mantelpieces, crackles with a comforting fire, adding to the room's cozy ambiance. As you take your seat among the plush upholstered chairs, you can almost sense the echoes of lively conversations and sumptuous feasts that have graced this room throughout history. The dining room, an extension of the majestic foyer, continues to exude an aura of timeless elegance and serves as a testament to the refined taste of the past.",
-            "locItems": [
+            "locFeatures": [
                 {
 
                 }
