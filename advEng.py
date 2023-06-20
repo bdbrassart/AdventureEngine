@@ -244,15 +244,30 @@ class advEngEnv:
         self.playerLook()
     
     def examine(self): 
+        # We can examine features, location items, and inventory items.
+
         acceptedParams = 1 # the accepted number of params this command accepts, squack if over.
 
-        #Create list of items in the room to examine
+        #Create list of location features to examine
         featureList = []
-
         for item in self.currentLoc.locFeatures:
             for key in item.keys():
                 featureList.append(key)
 
+        #Create list of items to examine
+        aliasList = {}
+        itemList = self.getItemsByLoc(self.player.locID) # pull all items in location 
+        invList = self.getItemsByLoc('locInventory') # pull all inventory items
+
+        # add location item aliases to list
+        for itemID, itm in itemList.items():
+            aliasList[itemID] = itm.itemAlias
+
+        # also add inventory item aliases to list
+        for itemID, itm in invList.items():
+            aliasList[itemID] = itm.itemAlias
+        
+        #print(aliasList)
         if len(self.userParams) > acceptedParams:
             print("I don't understand!")
         elif len(self.userParams) == 0:
@@ -260,6 +275,11 @@ class advEngEnv:
         else:
             if self.userParams[0] in featureList:
                 print(self.currentLoc.locFeatures[0][self.userParams[0]][0]['featureDesc'])
+            elif self.userParams[0] in aliasList.values():
+                for key, value in aliasList.items():
+                    if self.userParams[0] == value:
+                        print(self.items[key].itemDesc)
+                        
             else:
                 print("I don't see that item here!")
     
