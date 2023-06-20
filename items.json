@@ -29,7 +29,7 @@
             "itemAlias": "necklace",
             "itemSize": "medium",
             "itemDesc": "The silver necklace is adorned with a pendant.",
-            "itemSecret": "No hidden secrets."
+            "itemSecret": ""
         }
     ],
     "itemID_4": [
@@ -40,7 +40,7 @@
             "itemAlias": "journal",
             "itemSize": "small",
             "itemDesc": "The leather journal is filled with handwritten pages.",
-            "itemSecret": "No hidden secrets."
+            "itemSecret": ""
         }
     ]
 }

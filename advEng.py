@@ -255,17 +255,18 @@ class advEngEnv:
                 featureList.append(key)
 
         #Create list of items to examine
-        aliasList = {}
+        itemAliasList = {}
+        invAliasList = {}
         itemList = self.getItemsByLoc(self.player.locID) # pull all items in location 
         invList = self.getItemsByLoc('locInventory') # pull all inventory items
 
         # add location item aliases to list
         for itemID, itm in itemList.items():
-            aliasList[itemID] = itm.itemAlias
+            itemAliasList[itemID] = itm.itemAlias
 
         # also add inventory item aliases to list
         for itemID, itm in invList.items():
-            aliasList[itemID] = itm.itemAlias
+            invAliasList[itemID] = itm.itemAlias
         
         #print(aliasList)
         if len(self.userParams) > acceptedParams:
@@ -273,13 +274,23 @@ class advEngEnv:
         elif len(self.userParams) == 0:
             print("What would you like to examine?")
         else:
+            # this bit checks if there is a room feature with the proper alias
             if self.userParams[0] in featureList:
                 print(self.currentLoc.locFeatures[0][self.userParams[0]][0]['featureDesc'])
-            elif self.userParams[0] in aliasList.values():
-                for key, value in aliasList.items():
+            # this bit checks the items in the location
+            elif self.userParams[0] in itemAliasList.values():
+                for key, value in itemAliasList.items():
                     if self.userParams[0] == value:
+                        # if it's just in the location, you only get the description
                         print(self.items[key].itemDesc)
-                        
+            # this bit checks the items in the player inventory
+            elif self.userParams[0] in invAliasList.values():
+                for key, value in invAliasList.items():
+                    if self.userParams[0] == value:
+                        # if you're holding the item, you can examine it closer and get the secret description
+                        print(self.items[key].itemDesc)
+                        if self.items[key].itemSecret != "":
+                            print(self.items[key].itemSecret)        
             else:
                 print("I don't see that item here!")
     
