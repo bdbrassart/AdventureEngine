@@ -92,7 +92,10 @@ class advEngEnv:
             "s": self.playerMove,
             "e": self.playerMove,
             "w": self.playerMove,
-            "examine": self.examine
+            "examine": self.examine,
+            "inventory": self.playerInventory,
+            "get": self.playerGetItem,
+            "drop": self.playerDropItem
         }
     ##########################################
     ### THIS SECTION IS FOR MISC FUNCTIONS ###
@@ -229,7 +232,7 @@ class advEngEnv:
 
     def playerMove(self):
         # Calculate the adjacent locations from locations data
-        adjLocs = self.locations[self.player.locID][0]['locExits']
+        adjLocs = self.locations[self.player.locID].locExits
 
         # Determine the destination locID from the input direction
         destLoc = adjLocs[0][self.userCmd]
@@ -244,20 +247,84 @@ class advEngEnv:
         acceptedParams = 1 # the accepted number of params this command accepts, squack if over.
 
         #Create list of items in the room to examine
-        itemList = []
+        featureList = []
 
         for item in self.currentLoc.locFeatures:
             for key in item.keys():
-                itemList.append(key)
+                featureList.append(key)
 
         if len(self.userParams) > acceptedParams:
             print("I don't understand!")
         elif len(self.userParams) == 0:
             print("What would you like to examine?")
         else:
-            if self.userParams[0] in itemList:
+            if self.userParams[0] in featureList:
                 print(self.currentLoc.locFeatures[0][self.userParams[0]][0]['featureDesc'])
+            else:
+                print("I don't see that item here!")
+    
+    def playerInventory(self):
+        
+        # pull all inventory items
+        playerInventory = self.getItemsByLoc('locInventory')
+        
+        #print them out pretty
+        for itemDetails in playerInventory.values():
+            print(itemDetails.itemName)
+
+    def playerGetItem(self):
+
+        acceptedParams = 1 # the accepted number of params this command accepts, squack if over.
+        aliasList = {} # create empty dict to store item aliases for later searching
+        itemList = self.getItemsByLoc(self.player.locID) # pull all items in location 
+
+        for itemID, itm in itemList.items():
+            aliasList[itemID] = itm.itemAlias
+
+        # check and figure out the user input
+        if len(self.userParams) > acceptedParams:
+            print("I don't understand!")
+        elif len(self.userParams) == 0:
+            print("What would you like to get?")
+        else:
+            # if we only have one parameter, continue
+            if self.userParams[0] in aliasList.values():
+                # fill the alias dict to compare the user parameter to
+                for key, value in aliasList.items():
+                    if self.userParams[0] == value:
+                        #  if the item exists in the location, change the location to inventory
+                        self.items[key].itemLoc = "locInventory"
             else:
                 print("I don't see that item here!")
         pass
 
+    def playerDropItem(self):
+
+        # this is just a copy of the GET command, but instead of putting it in inventory, you put it in the current loc
+
+        acceptedParams = 1 # the accepted number of params this command accepts, squack if over.
+        aliasList = {} # create empty dict to store item aliases for later searching
+        itemList = self.getItemsByLoc('locInventory') # pull all items in inventory
+
+        for itemID, itm in itemList.items():
+            aliasList[itemID] = itm.itemAlias
+
+        # check and figure out the user input
+        if len(self.userParams) > acceptedParams:
+            print("I don't understand!")
+        elif len(self.userParams) == 0:
+            print("What would you like to get?")
+        else:
+            # if we only have one parameter, continue
+            if self.userParams[0] in aliasList.values():
+                # fill the alias dict to compare the user parameter to
+                for key, value in aliasList.items():
+                    if self.userParams[0] == value:
+                        #  if the item exists in the location, change the location to inventory
+                        self.items[key].itemLoc = self.player.locID
+            else:
+                print("I don't see that item here!")
+        pass
+
+
+        

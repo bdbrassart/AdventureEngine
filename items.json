@@ -35,7 +35,7 @@
     "itemID_4": [
         {
             "itemID": "itemID_4",
-            "itemLoc": "locID_2",
+            "itemLoc": "locInventory",
             "itemName": "a leather journal",
             "itemAlias": "journal",
             "itemSize": "small",
