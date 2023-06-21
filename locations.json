@@ -8,12 +8,26 @@
                 {
                     "flowers": [
                         {
-                         "featureDesc": "The flowers are a mixture of poppies, irises, and daffodils."   
+                            "featureID": "featID_1",
+                            "featureDesc": "The flowers are a mixture of poppies, irises, and daffodils.",
+                            "isContainer": false,
+                            "secretContainer": false  
                         }
                     ],
                     "staircase": [
                         {
-                         "featureDesc": "It's the most bitchen staircase you've ever seen!"   
+                            "featureID": "featID_4",   
+                            "featureDesc": "It's the most bitchen staircase you've ever seen!",
+                            "isContainer": false,   
+                            "secretContainer": false  
+                        }
+                    ],
+                    "table": [
+                        {
+                            "featureID": "featID_3",
+                            "featureDesc": "An elegent, Queen Anne style console table with a small drawer on the front.",
+                            "isContainer": true,
+                            "secretContainer": false     
                         }
                     ]
                 }
@@ -31,10 +45,17 @@
         {
             "locID": "locID_2",
             "locTitle": "The Dining Room",
-            "locDesc": "Entering the dining room, an air of sophistication and grandeur envelops you. The walls are adorned with opulent tapestries depicting pastoral scenes, while ornate wooden paneling showcases intricate craftsmanship. A long, polished mahogany dining table takes center stage, adorned with exquisite silverware, fine china, and sparkling crystal glasses. The flickering candlelight from the elegant chandeliers casts a warm glow, illuminating the room's richly patterned carpet. A grand fireplace, adorned with gilded mantelpieces, crackles with a comforting fire, adding to the room's cozy ambiance. As you take your seat among the plush upholstered chairs, you can almost sense the echoes of lively conversations and sumptuous feasts that have graced this room throughout history. The dining room, an extension of the majestic foyer, continues to exude an aura of timeless elegance and serves as a testament to the refined taste of the past.",
+            "locDesc": "Entering the dining room, an air of sophistication and grandeur envelops you. The walls are adorned with opulent tapestries depicting pastoral scenes, while ornate wooden paneling showcases intricate craftsmanship. A long, polished mahogany dining table takes center stage, adorned with exquisite silverware, fine china, and sparkling crystal glasses. The flickering candlelight from the elegant chandeliers casts a warm glow, illuminating the room's richly patterned carpet. A grand fireplace, adorned with gilded mantelpieces, crackles with a comforting fire, adding to the room's cozy ambiance. There is a statue on the mantle. As you take your seat among the plush upholstered chairs, you can almost sense the echoes of lively conversations and sumptuous feasts that have graced this room throughout history. The dining room, an extension of the majestic foyer, continues to exude an aura of timeless elegance and serves as a testament to the refined taste of the past.",
             "locFeatures": [
                 {
-
+                    "statue": [
+                        {
+                            "featureID": "featID_4",
+                            "featureDesc": "The statue is a bust of a very stern looking woman.  When you examine it closely, you can see a small catch behind her left ear.  Activating the catch pops open a small drawer in the base.",
+                            "isContainer": false,
+                            "secretContainer": true  
+                        }
+                    ]
                 }
                 
             ],
