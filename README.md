@@ -51,11 +51,11 @@ The structure of the `locations.json` file is as follows:
   - `locID`: This is included in case we need to reference it in the values, instead of the keys.
   - `locTitle`: This acts as the "title" of the room on the console.
   - `locDesc`: Narrative description of the room.  Ideally this is anywhere from 75 to 150 words in length.
-  - `locFeatures`: This contains a serie s of third-level keys are the one-word "alias" of the feature, as referred to by the player.  The values contain information about the feature.
+  - `locFeatures`: This contains a series of third-level keys are the one-word "alias" of the feature, as referred to by the player.  The values contain information about the feature.
     - `featureID`: The unique featureID, used when a feature is used as a container.
     - `featureDesc`: Narrative description of the feature.
     - `isContainer`: Boolean, if the device is a container.
-    - `secretContainer: Boolean, if the feature is a container, but only after examining the feature.
+    - `secretContainer`: Boolean, if the feature is a container, but only after examining the feature.
 
 ### items.json
 location == room
