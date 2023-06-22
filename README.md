@@ -1,12 +1,12 @@
 # AdventureEngine
 
-This is just a small "game engine" that could act as a framework for a text based adventure.
+This is my attempt at building a "game engine" for a text based adventure.
 
-I was inspired by MUDs like Gemstone, DragonRealms, and Aardwolf, and while I realize that I could just go play them instead, I thought it would be fun to try and make a rudimentary "MUD Engine" that you could easily build in your own rooms without much coding.
+I was inspired by MUDs like Gemstone, DragonRealms, and Aardwolf, and while I realize that I could just go play them instead, since those developers have done amazing work for years and years, I thought it would be fun to try and make a rudimentary "MUD Engine" that you could easily build in your own rooms with just a little JSON.
 
-Maybe eventually you could create a Front End for "dungeon creation" the simplify entry of locations etc...
+Maybe eventually you could create a Front End for "dungeon creation" the simplify entry of locations etc..., or potentially build in AI integration with an API?
 
-Primarily it's an excuse to practice python.  I find it a lot easier to learn/play with code if I have an end goal.  I also wanted to get better at understanding classes and other aspects of object oriented programming.
+Primarily it's an excuse to practice python.  I find it a lot easier to learn/play with code if I have an end goal.  I also wanted to get better at understanding classes and other aspects of object oriented programming, so I've tried to explore those a bit here with.
 
 ## Classes
 
@@ -33,8 +33,17 @@ THis stores information from the `locations.json` file and makes it easier to re
 
 The `__init__` function accepts a single top-level key->value pair from `locations.json` and assigns it to the class variables.
 
-## JSON Files
+### `invItems` 
+This stores information about items in the world.  I went with `invItems` because it got confusing enough referencing the `invItems.item()`, things just got a bit too itemy and confusing.
 
+The `__init__` function accepts a single top-level key->value pair from `items.json` and assigns it to the class variables.
+
+## JSON Files
+For now, there are only two main files that drive the content of the game:
+
+- `locations.json` contains locations and location information.
+- `items.json` contains items that a player can interract with.
+  
 ### locations.json
 The structure of the `locations.json` file is as follows:
 - Each location is stored in a top-level key, which is a unique location ID.
