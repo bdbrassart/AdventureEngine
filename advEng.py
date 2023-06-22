@@ -40,7 +40,20 @@ class location:
         self.locTitle = loc[0]['locTitle']
         self.locDesc = loc[0]['locDesc']
         self.locExits = loc[0]['locExits']
-        self.locFeatures = loc[0]['locFeatures']
+
+         # Create the list variable to hold the location objects
+        locFeatures = {}
+        featureDict = loc[0]['locFeatures'][0]
+
+        # iterate thru the provided locations and create the list of location items
+
+        for featureName, featureDetails in featureDict.items():
+            feature = locFeature(featureDetails)
+            feature.featureName = featureName
+            feature.featureLoc = self.locID
+            locFeatures[featureName] = feature
+        
+        self.locFeatures = locFeatures
 
 class invItem:
 
@@ -61,6 +74,23 @@ class invItem:
         self.itemSize = item[0]['itemSize']
         self.itemDesc = item[0]['itemDesc']
         self.itemSecret = item[0]['itemSecret']
+
+class locFeature:
+    # class that holds location features so that we can call them like locations and items
+
+    featureID: str
+    featureLoc: str
+    featureName: str
+    featureDesc: str
+    featureSecret: str
+    isContainer: bool
+    secretContainer: bool
+
+    def __init__ (self, feature):
+        self.featureID = feature[0]['featureID']
+        self.featureDesc = feature[0]['featureDesc']
+        self.isContainer = feature[0]['isContainer'] 
+        self.secretContainer = feature[0]['secretContainer']
 
 class advEngEnv:
     player: mainChar
@@ -96,7 +126,8 @@ class advEngEnv:
             "examine": self.examine,
             "inventory": self.playerInventory,
             "get": self.playerGetItem,
-            "drop": self.playerDropItem
+            "drop": self.playerDropItem,
+            "put": self.playerPutItem
         }
     ##########################################
     ### THIS SECTION IS FOR MISC FUNCTIONS ###
@@ -159,9 +190,8 @@ class advEngEnv:
         highlightList = []
 
         # Populate it with the item names from the locFeatures 
-        for feature in currentLoc.locFeatures:
-            for key in feature.keys():
-                highlightList.append(key)
+        for featureName in currentLoc.locFeatures.keys():
+            highlightList.append(featureName)
         
         return highlightList
         
@@ -250,9 +280,9 @@ class advEngEnv:
                 # first look in valid features to look in
                 if self.userParams[1] in locFeatures:
                     # make sure it's a container
-                    if self.currentLoc.locFeatures[0][self.userParams[1]][0]['isContainer'] == True:
+                    if self.currentLoc.locFeatures[self.userParams[1]].isContainer == True:
                         # pull items from featureID
-                        featItems = self.getItemsByLoc(self.currentLoc.locFeatures[0][self.userParams[1]][0]['featureID'])
+                        featItems = self.getItemsByLoc(self.currentLoc.locFeatures[self.userParams[1]].featureID)
                         # output the magic
                         print(f"Inside the {self.userParams[1]} you see...")
                         for itemDetails in featItems.values():
@@ -294,9 +324,8 @@ class advEngEnv:
 
         #Create list of location features to examine
         featureList = []
-        for item in self.currentLoc.locFeatures:
-            for key in item.keys():
-                featureList.append(key)
+        for featureName in self.currentLoc.locFeatures.keys():
+            featureList.append(featureName)
 
         #Create list of items to examine
         itemAliasList = {}
@@ -320,10 +349,10 @@ class advEngEnv:
         else:
             # this bit checks if there is a room feature with the proper alias
             if self.userParams[0] in featureList:
-                print(self.currentLoc.locFeatures[0][self.userParams[0]][0]['featureDesc'])
+                print(self.currentLoc.locFeatures[self.userParams[0]].featureDesc)
                 # Now we must activate the container if it has a secret container.
-                if self.currentLoc.locFeatures[0][self.userParams[0]][0]['secretContainer'] == True:
-                    self.currentLoc.locFeatures[0][self.userParams[0]][0]['isContainer'] = True
+                if self.currentLoc.locFeatures[self.userParams[0]].secretContainer == True:
+                    self.currentLoc.locFeatures[self.userParams[0]].isContainer = True
 
             # this bit checks the items in the location
             elif self.userParams[0] in itemAliasList.values():
@@ -353,20 +382,20 @@ class advEngEnv:
 
     def playerGetItem(self):
 
-        acceptedParams = 1 # the accepted number of params this command accepts, squack if over.
+        acceptedParams = 3 # the accepted number of params this command accepts, squack if over.
         aliasList = {} # create empty dict to store item aliases for later searching
-        itemList = self.getItemsByLoc(self.player.locID) # pull all items in location 
 
-        for itemID, itm in itemList.items():
-            aliasList[itemID] = itm.itemAlias
-
-        # check and figure out the user input
-        if len(self.userParams) > acceptedParams:
-            print("I don't understand!")
-        elif len(self.userParams) == 0:
+        if len(self.userParams) == 0: # we gotta have some params
             print("What would you like to get?")
-        else:
-            # if we only have one parameter, continue
+        elif len(self.userParams) > acceptedParams: # if there are too many params
+            print("I don't understand!")
+        elif len(self.userParams) == 1: # single param means they want to get something from the room
+             # pull all items in location 
+            itemList = self.getItemsByLoc(self.player.locID)
+            
+            #build the alias list
+            for itemID, itm in itemList.items():
+                aliasList[itemID] = itm.itemAlias
             if self.userParams[0] in aliasList.values():
                 # fill the alias dict to compare the user parameter to
                 for key, value in aliasList.items():
@@ -376,6 +405,20 @@ class advEngEnv:
                         self.items[key].itemLoc = "locInventory"
             else:
                 print("I don't see that item here!")
+        elif self.userParams[1] == "from":
+            itemList = self.getItemsByLoc(self.currentLoc.locFeatures[self.userParams[2]].featureID)
+
+            #build the alias list
+            for itemID, itm in itemList.items():
+                aliasList[itemID] = itm.itemAlias
+
+            if self.userParams[0] in aliasList.values():
+                # fill the alias dict to compare the user parameter to
+                for key, value in aliasList.items():
+                    if self.userParams[0] == value:
+                        #  if the item exists in the location, change the location to inventory
+                        print(f"You get the {value} from the {self.userParams[2]}.")
+                        self.items[key].itemLoc = "locInventory"
         pass
 
     def playerDropItem(self):
@@ -405,6 +448,33 @@ class advEngEnv:
                         self.items[key].itemLoc = self.player.locID
             else:
                 print("You don't have that item!")
+        pass
+
+    def playerPutItem(self):
+        acceptedParams = 3 # the accepted number of params this command accepts, squack if over.
+        aliasList = {} # create empty dict to store item aliases for later searching
+
+        if len(self.userParams) == 0: # we gotta have some params
+            print("What would you like to get?")
+        elif self.userParams[1] != "in": # if you're not putting something IN something
+            print("I don't understand") 
+        elif len(self.userParams) > acceptedParams: # if there are too many params
+            print("I don't understand!")
+        else:
+            itemList = self.getItemsByLoc('locInventory')
+
+            #build the alias list
+            for itemID, itm in itemList.items():
+                aliasList[itemID] = itm.itemAlias
+
+            if self.userParams[0] in aliasList.values():
+                # fill the alias dict to compare the user parameter to
+                for key, value in aliasList.items():
+                    if self.userParams[0] == value:
+                        #  if the item exists in the location, change the location to inventory
+                        print(f"You put the {value} in the {self.userParams[2]}.")
+                        self.items[key].itemLoc = self.currentLoc.locFeatures[self.userParams[2]].featureID
+
         pass
 
 
