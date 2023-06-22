@@ -11,7 +11,7 @@ def main():
 
     if startInput == "new":
         #load player
-        player = mainChar("Bedail", "Human")
+        player = mainChar("Ben", "Human")
 
         #load locations
         locationsFile = "locations.json"
@@ -21,7 +21,7 @@ def main():
         
         #create environment
         worldEnv = advEngEnv(player, locationsFile, itemsFile)
-        
+
     elif startInput == "load":
         #pickle shit here
         saveFile = input("Enter the name of the file you would like to load: ")
@@ -34,7 +34,8 @@ def main():
     worldEnv.playerLook()
 
     while True:
-        userInput = input(worldEnv.player.name + " || " + str(worldEnv.player.hpCurr) + "//" + str(worldEnv.player.hpTotal) + " HP> ")
+        #userInput = input(worldEnv.player.name + " || " + str(worldEnv.player.hpCurr) + "//" + str(worldEnv.player.hpTotal) + " HP> ")
+        userInput = input(worldEnv.player.name +"> ")
 
         # Lower all that shit
         userInput = userInput.lower()

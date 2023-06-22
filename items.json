@@ -2,7 +2,7 @@
     "itemID_1": [
         {
             "itemID": "itemID_1",
-            "itemLoc": "locID_1",
+            "itemLoc": "featID_3",
             "itemName": "a gold pocket-watch",
             "itemAlias": "watch",
             "itemSize": "small",
@@ -24,7 +24,7 @@
     "itemID_3": [
         {
             "itemID": "itemID_3",
-            "itemLoc": "locID_1",
+            "itemLoc": "featID_4",
             "itemName": "a silver necklace",
             "itemAlias": "necklace",
             "itemSize": "medium",
