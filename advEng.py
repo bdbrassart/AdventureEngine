@@ -10,7 +10,6 @@ class mainChar:
     race: str
     hpTotal: int
     hpCurr: int
-    inventory: dict
 
     def __init__(self, name, race):
         self.name = name
@@ -45,7 +44,7 @@ class location:
         locFeatures = {}
         featureDict = loc[0]['locFeatures'][0]
 
-        # iterate thru the provided locations and create the list of location items
+        # iterate thru the provided locations and create the list of location features
 
         for featureName, featureDetails in featureDict.items():
             feature = locFeature(featureDetails)
@@ -75,6 +74,26 @@ class invItem:
         self.itemDesc = item[0]['itemDesc']
         self.itemSecret = item[0]['itemSecret']
 
+class npChar:
+
+    # npc class stores info about npcs
+    npcID: str
+    npcLoc: str
+    npcName: str
+    npcAlias: list
+    npcDesc: str
+    npcStartLoc: str
+    npcPath: list
+
+    def __init__(self, npc):
+        self.npcID = npc[0]['npcID']
+        self.npcLoc = npc[0]['npcLoc']
+        self.npcName = npc[0]['npcName']
+        self.npcAlias = npc[0]['npcAlias']
+        self.npcDesc = npc[0]['npcDesc']
+        self.npcStartLoc = npc[0]['npcStartLoc']
+        self.npcPath = npc[0]['npcPath']
+
 class locFeature:
     # class that holds location features so that we can call them like locations and items
 
@@ -97,11 +116,11 @@ class advEngEnv:
     commands: dict
     userCmd: str
     userParams: list
-    activeLoc: location
     items: dict
     locations: dict
+    npcs: dict
 
-    def __init__(self, player, locations, items):
+    def __init__(self, player, locations, items, npcs):
         # Load the player
         self.player = player
         
@@ -110,6 +129,9 @@ class advEngEnv:
 
         # Load the items files
         self.items = self.loadItems(items)
+
+        # Load the npc files
+        self.npcs = self.loadNpcs(npcs)
 
         # set the params so it's not empty
         self.userParams = []
@@ -170,6 +192,13 @@ class advEngEnv:
 
         return formattedText
     
+    def formatLocNpcs(self, locNpcs):
+        # Create list of exits for look
+        locNpcStr = ', '.join([npc.npcName for npc in locNpcs.values()])
+        formattedText = f"\033[1mAlso here: \033[0m{locNpcStr}"
+        
+        return formattedText
+    
     def getItemsByLoc(self, currentLoc):
         # Returns a list of items in the provided location
 
@@ -194,6 +223,19 @@ class advEngEnv:
             highlightList.append(featureName)
         
         return highlightList
+    
+    def getNpcsByLoc(self, currentLoc):
+        # Returns a list of NPCs in the provided location
+
+        # Create empty list to populate
+        npcList = {}
+        
+        # iterate through npcs and grab ones in the provided loc
+        for npcID, npcDetails in self.npcs.items():
+            if npcDetails.npcLoc == currentLoc:
+                npcList[npcID] = npcDetails
+
+        return npcList
         
     def loadLocations(self, jsonFile):
 
@@ -226,6 +268,22 @@ class advEngEnv:
             envItems[itemID] = itm
 
         return envItems
+    
+    def loadNpcs(self, jsonFile):
+
+        # Create the list variable to hold the location objects
+        envNpcs = {}
+
+        # Load the locations files
+        with open(jsonFile, 'r') as file:
+            npcs = json.load(file)
+
+        # iterate thru the provided locations and create the list of location items
+        for npcID, npcDetails in npcs.items():
+            npc = npChar(npcDetails)
+            envNpcs[npcID] = npc
+
+        return envNpcs
                 
     ###################################     
     ### THIS IS THE COMMAND SECTION ###
@@ -247,6 +305,7 @@ class advEngEnv:
 
             # pull items from item data
             locItems = self.getItemsByLoc(self.player.locID)
+            locNpcs = self.getNpcsByLoc(self.player.locID)
 
             self.currentLoc = self.locations[self.player.locID]
 
@@ -254,6 +313,7 @@ class advEngEnv:
             print("\n")
             print(self.formatLocTitle(self.currentLoc.locTitle))
             print(self.formatLocDesc(self.currentLoc.locDesc))
+            print(self.formatLocNpcs(locNpcs))
             print(self.formatLocItems(locItems))
             print(self.formatLocExits(self.currentLoc.locExits))
             print("\n")
@@ -327,11 +387,13 @@ class advEngEnv:
         for featureName in self.currentLoc.locFeatures.keys():
             featureList.append(featureName)
 
-        #Create list of items to examine
+        #Create list of items, features, and npcs to examine
         itemAliasList = {}
         invAliasList = {}
+        npcAliasList = {}
         itemList = self.getItemsByLoc(self.player.locID) # pull all items in location 
         invList = self.getItemsByLoc('locInventory') # pull all inventory items
+        npcList = self.getNpcsByLoc(self.player.locID) # pulls all npcs in location
 
         # add location item aliases to list
         for itemID, itm in itemList.items():
@@ -341,7 +403,10 @@ class advEngEnv:
         for itemID, itm in invList.items():
             invAliasList[itemID] = itm.itemAlias
         
-        #print(aliasList)
+        # add NPC aliases to list
+        for npcID, npc in npcList.items():
+            npcAliasList[npcID] = npc.npcAlias
+
         if len(self.userParams) > acceptedParams:
             print("I don't understand!")
         elif len(self.userParams) == 0:
@@ -360,6 +425,7 @@ class advEngEnv:
                     if self.userParams[0] == value:
                         # if it's just in the location, you only get the description
                         print(self.items[key].itemDesc)
+
             # this bit checks the items in the player inventory
             elif self.userParams[0] in invAliasList.values():
                 for key, value in invAliasList.items():
@@ -367,7 +433,15 @@ class advEngEnv:
                         # if you're holding the item, you can examine it closer and get the secret description
                         print(self.items[key].itemDesc)
                         if self.items[key].itemSecret != "":
-                            print(self.items[key].itemSecret)        
+                            print(self.items[key].itemSecret)
+            
+            # this bit checks the npcs in the location
+            elif any(self.userParams[0] in value for value in npcAliasList.values()):
+                for key, value in npcAliasList.items():
+                    if self.userParams[0] in value:
+                        # if it's just in the location, you only get the description
+                        print(self.npcs[key].npcDesc)
+
             else:
                 print("I don't see that item here!")
     

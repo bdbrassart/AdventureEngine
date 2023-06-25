@@ -18,9 +18,12 @@ def main():
 
         #load items
         itemsFile = "items.json"
+
+        #load npcs
+        npcFile = "npcs.json"
         
         #create environment
-        worldEnv = advEngEnv(player, locationsFile, itemsFile)
+        worldEnv = advEngEnv(player, locationsFile, itemsFile, npcFile)
 
     elif startInput == "load":
         #pickle shit here
