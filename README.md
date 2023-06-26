@@ -42,7 +42,7 @@ The `__init__` function accepts a single top-level key->value pair from `items.j
 For now, there are only two main files that drive the content of the game:
 
 - `locations.json` contains locations and location information.
-- `items.json` contains items that a player can interract with.
+- `items.json` contains items that a player can interract with that exist at the time of game initialization.
   
 ### locations.json
 The structure of the `locations.json` file is as follows:
@@ -58,11 +58,14 @@ The structure of the `locations.json` file is as follows:
     - `secretContainer`: Boolean, if the feature is a container, but only after examining the feature.
 
 ### items.json
-location == room
-
-locations are defined in "locations.json" and include multiple parts, including title, description, and features.
-
-feature == part of a location that is permanent to the location
-
-item == something you can take with you from the room.  Items are defined in 'items.json'
+The structure of the `items.json` file is as follows:
+- Each item is stored in a top-level key, which is a unique item ID.
+- The second-level keys are thus:
+  - `itemID`: This is included in case we need to reference it in the values, instead of the keys.
+  - `itemLoc`: This is the location of the item.
+  - `itemName`: The name of the item.  Make sure to use an indefinite article ('a' or 'an') to name items, so that the item list flows narratively.
+  - `itemAlias`: This is a one-word alias for an item to be used with commands that refer explicitly to a specific item.
+  - `itemSize': Size of the item.  Not currently in use, but possibly in the future for determining if an item fits in a container.
+  - `itemDesc`: Narrative description of the item.  Should be one or two sentences describing a general appearance.
+  - `itemSecret`: Only revealed on 'examine,' so only features that would be seen with close examination.
 
