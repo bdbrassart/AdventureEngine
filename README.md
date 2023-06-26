@@ -38,6 +38,20 @@ This stores information about items in the world.  I went with `invItems` becaus
 
 The `__init__` function accepts a single top-level key->value pair from `items.json` and assigns it to the class variables.
 
+### `locFeature`
+This stores information about features in a location.  The `locFeatures` variable of the `location` class contains a dict containing `locFeature` values.  This class is used on the `location` class init function, to hold details about each location's features.
+
+### `advEngEnv`
+This is the main environment class for the game.  Variables include:
+- `player`: `mainChar` containing the player character.  Defined on init.
+- `commands`: Dictionary defined on init that contains command alias-to-function mappings.
+- `userCmd`: Most recently entered user command.
+- `userParams`: List containing command parameters.
+- `items`: Dictionary containing `invItems`.  Defined on init from `items.json`.
+- `locations`: Dictionary containing `locations`.  Defined on init from `locations.json`.
+
+The save function dumps this class out, as it contains everything about the current state of the in-progress game.
+
 ## JSON Files
 For now, there are only two main files that drive the content of the game:
 
