@@ -91,8 +91,13 @@ The structure of the `npcs.json` file is as follows:
 - Each NPC is stored in a top-level key, which is a unique NPC ID.
 - The second-level keys are thus:
   - `npcID`: This is included in case we need to reference it in the values, instead of the keys.
-  - `npcLoc`: This is the location of the NPC.
+  - `npcLoc`: This is the location of the NPC.  This value can be update/changed when the NPC moves around the world.
   - `npcName`: The name of the NPC.  This would ideally be a full name.
   - `npcAlias`: This is a list of one-word aliases for an NPC to be used with commands that refer explicitly to a specific NPC.
   - `npcDesc`: Narrative description of the NPC.  Should be three or four sentences describing the general appearance of the NPC.
+  - `npcStartLoc`: This is the location ID of where the NPC starts when the world environment is created.
+  - `npcPath`: This is a list of location IDs that the NPC moves through.  To be used in the NPC functions for roaming.
+
+## Non Player Characters (NPCs)
+NPCs are handled a bit cludgy, in my opinion, but it's the only way I could figure out how to handle it.  Each NPC has a function in the `npcActions.py` file that governs the NPCs behavior and actions.  When the gat
 
