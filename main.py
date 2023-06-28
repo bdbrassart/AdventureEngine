@@ -92,10 +92,10 @@ def main(stdscr):
 
     ## NPC threads are defined in npcActions.py.  We need to loop through each NPC and start their thread.
     allNpcThreads = [] # list of threads for later closing
-    for npcID in worldEnv.npcs.keys():
+    for npcID, npcDetails in worldEnv.npcs.items():
         
         npcFunction = getattr(npcActions, npcID, None)
-        npcThread = threading.Thread(target=npcFunction, args=(outputWin,event,stopEvent))
+        npcThread = threading.Thread(target=npcFunction, args=(npcDetails,outputWin,event,stopEvent))
         npcThread.start()
         allNpcThreads.append(npcThread)
 
