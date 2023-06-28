@@ -99,5 +99,5 @@ The structure of the `npcs.json` file is as follows:
   - `npcPath`: This is a list of location IDs that the NPC moves through.  To be used in the NPC functions for roaming.
 
 ## Non Player Characters (NPCs)
-NPCs are handled a bit cludgy, in my opinion, but it's the only way I could figure out how to handle it.  Each NPC has a function in the `npcActions.py` file that governs the NPCs behavior and actions.  When the gat
+NPCs are handled a bit cludgy, in my opinion, but it's the only way I could figure out how to handle it.  Each NPC has a function in the `npcActions.py` file that governs the NPCs behavior and actions.  When the game starts, it iterates over the NPCs and starts a thread for each function.  So the NPC function needs to be a loop of all of it's actions and dialog interactions.  It's still a new feature, haven't played with it much but the basis should be there.  This section will contain notes about quirks on programming the NPC functions and some things to avoid and rules to adhere to.
 
