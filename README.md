@@ -8,6 +8,10 @@ Maybe eventually you could create a Front End for "dungeon creation" the simplif
 
 Primarily it's an excuse to practice python.  I find it a lot easier to learn/play with code if I have an end goal.  I also wanted to get better at understanding classes and other aspects of object oriented programming, so I've tried to explore those a bit here with.
 
+## User Interface
+
+The game uses Python's curses to manage the input/display windows.  When implementing threading, it was the only way I could figure out how to separate the input prompt from the output of the game, so that when environemnt things happened and output to the terminal, the user prompt remained at the bottom.
+
 ## Classes
 
 ### `advEngEnv`
