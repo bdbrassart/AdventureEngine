@@ -41,6 +41,9 @@ The `__init__` function accepts a single top-level key->value pair from `items.j
 ### `locFeature`
 This stores information about features in a location.  The `locFeatures` variable of the `location` class contains a dict containing `locFeature` values.  This class is used on the `location` class init function, to hold details about each location's features.
 
+### `npChar`
+This stores information about NPC's from the `npcs.json` file.  See more information about NPCs below.
+
 ### `advEngEnv`
 This is the main environment class for the game.  Variables include:
 - `player`: `mainChar` containing the player character.  Defined on init.
@@ -82,4 +85,14 @@ The structure of the `items.json` file is as follows:
   - `itemSize`: Size of the item.  Not currently in use, but possibly in the future for determining if an item fits in a container.
   - `itemDesc`: Narrative description of the item.  Should be one or two sentences describing a general appearance.
   - `itemSecret`: Only revealed on 'examine,' so only features that would be seen with close examination.
+
+### `npcs.json`
+The structure of the `npcs.json` file is as follows:
+- Each NPC is stored in a top-level key, which is a unique NPC ID.
+- The second-level keys are thus:
+  - `npcID`: This is included in case we need to reference it in the values, instead of the keys.
+  - `npcLoc`: This is the location of the NPC.
+  - `npcName`: The name of the NPC.  This would ideally be a full name.
+  - `npcAlias`: This is a list of one-word aliases for an NPC to be used with commands that refer explicitly to a specific NPC.
+  - `npcDesc`: Narrative description of the NPC.  Should be three or four sentences describing the general appearance of the NPC.
 
