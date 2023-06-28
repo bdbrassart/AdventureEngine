@@ -12,13 +12,13 @@
     ],
     "npcID_2": [
         {
-        "npcID": "npcID_2",
-        "npcLoc": "locID_2",
-        "npcName": "Nigel Whitmore",
-        "npcAlias": ["nigel", "valet"],
-        "npcDesc": "Nigel Whitmore is a seasoned valet with an impeccable sense of style and a knack for anticipating his employer's every need. Clad in a tailored navy blue suit and a crisp white shirt, Nigel exudes an air of refined professionalism. His neatly combed dark hair and impeccably groomed appearance reflect his meticulous attention to detail. With a warm smile and attentive eyes, Nigel ensures that every aspect of his employer's personal grooming and wardrobe is flawlessly taken care of, embodying the epitome of tailored elegance.",
-        "npcStartLoc": "locID_2",
-        "npcPath": ["locID_1", "locID_2"]
+            "npcID": "npcID_2",
+            "npcLoc": "locID_2",
+            "npcName": "Nigel Whitmore",
+            "npcAlias": ["nigel", "valet"],
+            "npcDesc": "Nigel Whitmore is a seasoned valet with an impeccable sense of style and a knack for anticipating his employer's every need. Clad in a tailored navy blue suit and a crisp white shirt, Nigel exudes an air of refined professionalism. His neatly combed dark hair and impeccably groomed appearance reflect his meticulous attention to detail. With a warm smile and attentive eyes, Nigel ensures that every aspect of his employer's personal grooming and wardrobe is flawlessly taken care of, embodying the epitome of tailored elegance.",
+            "npcStartLoc": "locID_2",
+            "npcPath": ["locID_1", "locID_2"]
         }
     ]
 }

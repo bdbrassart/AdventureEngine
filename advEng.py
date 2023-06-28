@@ -1,7 +1,7 @@
 
 import json
 import string
-
+import curses
 # Collection of classes for "Adventure Engine"
 # please use camelcase
 
@@ -119,8 +119,9 @@ class advEngEnv:
     items: dict
     locations: dict
     npcs: dict
+    cursesWin: curses
 
-    def __init__(self, player, locations, items, npcs):
+    def __init__(self, player, locations, items, npcs, cursesWin):
         # Load the player
         self.player = player
         
@@ -132,6 +133,9 @@ class advEngEnv:
 
         # Load the npc files
         self.npcs = self.loadNpcs(npcs)
+
+        # Set the curses window for display
+        self.cursesWin = cursesWin
 
         # set the params so it's not empty
         self.userParams = []
@@ -151,53 +155,78 @@ class advEngEnv:
             "drop": self.playerDropItem,
             "put": self.playerPutItem
         }
+
+        # Define our curses color pairs
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE) # header color
+        curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK) 
+
+    def __getstate__(self):
+        # return a dict of class variables to include in save
+        state = self.__dict__.copy()
+        del state['cursesWin'] # Exclude the curses window, because it doesn't serialize
+        return state
+    
+    def __setstate__(self, state):
+        # restore the state from pickle save
+        self.__dict__.update(state)
+        
     ##########################################
     ### THIS SECTION IS FOR MISC FUNCTIONS ###
     ##########################################
 
     def formatLocDesc(self, locDesc):
         # get list of features to highlight
-
         highlightList = self.getFeaturesByLoc(self.currentLoc)
-
         # create var we can highlight containing the desc
-        formattedText = locDesc
-
-        # replace the words from the list with highlighted words
+        for word in locDesc.split():
+            if word in highlightList:
+                self.cursesWin.attrset(curses.color_pair(2))
+                self.cursesWin.addstr(f"{word}\x20")
+            else:
+                self.cursesWin.attrset(curses.A_NORMAL)
+                self.cursesWin.addstr(f"{word}\x20")
+                
+        self.cursesWin.addstr(f"\n")
         
-        for word in highlightList:
-            formattedText = formattedText.replace(word, '\033[33m{}\033[0m'.format(word))
-            
-        return formattedText.strip()
+        pass
     
     def formatLocTitle(self, locTitle):
         # Prettify loc title for look
+        self.cursesWin.attrset(curses.A_STANDOUT)
         formattedText = locTitle.center(len(locTitle) + 4)
+        self.cursesWin.addstr(f"{formattedText}\n")
 
-        formattedText = f"\033[47;30;1m{formattedText}\033[0m"
-
-        return formattedText
+        pass
     
     def formatLocItems(self, locItems):
         # create list of items for look
+        self.cursesWin.attrset(curses.A_BOLD)
         locItemsStr = ', '.join([item.itemName for item in locItems.values()])
-        formattedText = f"\033[1mYou also see: \033[0m{locItemsStr}"
+        self.cursesWin.addstr(f"You also see: ")
+        self.cursesWin.attrset(curses.A_NORMAL)
+        self.cursesWin.addstr(f"{locItemsStr}\n")
         
-        return formattedText
+        pass
     
     def formatLocExits(self, locExits):
         # Create list of exits for look
+        self.cursesWin.attrset(curses.A_BOLD)
         locExitsStr = ', '.join(key for item in locExits for key in item.keys())
-        formattedText = f"\033[1mExits: \033[0m{locExitsStr}"
+        self.cursesWin.addstr(f"Exits: ")
+        self.cursesWin.attrset(curses.A_NORMAL)
+        self.cursesWin.addstr(f"{locExitsStr}\n")
 
-        return formattedText
+        pass
     
     def formatLocNpcs(self, locNpcs):
         # Create list of exits for look
+        self.cursesWin.attrset(curses.A_BOLD)
         locNpcStr = ', '.join([npc.npcName for npc in locNpcs.values()])
-        formattedText = f"\033[1mAlso here: \033[0m{locNpcStr}"
+        self.cursesWin.addstr(f"Also here: ")
+        self.cursesWin.attrset(curses.A_NORMAL)
+        self.cursesWin.addstr(f"{locNpcStr}\n") 
         
-        return formattedText
+        pass
     
     def getItemsByLoc(self, currentLoc):
         # Returns a list of items in the provided location
@@ -292,7 +321,7 @@ class advEngEnv:
     def showHelp(self):
         self.name = "help"
         self.helpFile = "Lists all available commands."
-        print("This is the help command")
+        self.cursesWin.addstr("This is the help command\n\n")
     
     def playerLook(self):
         self.name = "look"
@@ -310,13 +339,14 @@ class advEngEnv:
             self.currentLoc = self.locations[self.player.locID]
 
             # Format things prettily
-            print("\n")
-            print(self.formatLocTitle(self.currentLoc.locTitle))
-            print(self.formatLocDesc(self.currentLoc.locDesc))
-            print(self.formatLocNpcs(locNpcs))
-            print(self.formatLocItems(locItems))
-            print(self.formatLocExits(self.currentLoc.locExits))
-            print("\n")
+            #print("\n\n")
+            
+            self.formatLocTitle(self.currentLoc.locTitle)
+            self.formatLocDesc(self.currentLoc.locDesc)
+            self.formatLocNpcs(locNpcs)
+            self.formatLocItems(locItems)
+            self.formatLocExits(self.currentLoc.locExits)
+            self.cursesWin.addstr("\n\n")
         
         # first need to check if any params were entered:
 
@@ -327,7 +357,7 @@ class advEngEnv:
                 
                 # squack if they don't specify a feature to look in
                 if self.userParams == 2:
-                    print("What would you like to look in?")
+                   self.cursesWin.addstr("What would you like to look in?\n\n")
                 
                 # Check if the next parameter is a listed feature
                 locFeatures = self.getFeaturesByLoc(self.currentLoc)
@@ -344,25 +374,23 @@ class advEngEnv:
                         # pull items from featureID
                         featItems = self.getItemsByLoc(self.currentLoc.locFeatures[self.userParams[1]].featureID)
                         # output the magic
-                        print(f"Inside the {self.userParams[1]} you see...")
+                        self.cursesWin.addstr(f"Inside the {self.userParams[1]} you see...\n\n")
                         for itemDetails in featItems.values():
-                            print(itemDetails.itemName)
+                            self.cursesWin.addstr(itemDetails.itemName)
                     else:
-                        print("You can't look in that!")
+                        self.cursesWin.addstr("You can't look in that!\n\n")
                     
                 elif self.userParams[1] in descWords:
-                    print(f"You can't look in that!")
+                    self.cursesWin.addstr(f"You can't look in that!\n\n")
                 else:
-                    print("I don't see that here!")
+                    self.cursesWin.addstr("I don't see that here!\n\n")
             else:
-                print("I don't understand!")
-
-        
+                self.cursesWin.addstr("I don't understand!\n\n")
 
     def playerSit(self):
         self.name = "sit"
         self.helpfile = "Sit down."
-        print("This is the sit command")
+        self.cursesWin.addstr("This is the sit command\n\n")
 
     def playerMove(self):
         # Calculate the adjacent locations from locations data
@@ -408,13 +436,13 @@ class advEngEnv:
             npcAliasList[npcID] = npc.npcAlias
 
         if len(self.userParams) > acceptedParams:
-            print("I don't understand!")
+            self.cursesWin.addstr("I don't understand!\n\n")
         elif len(self.userParams) == 0:
-            print("What would you like to examine?")
+            self.cursesWin.addstr("What would you like to examine?\n\n")
         else:
             # this bit checks if there is a room feature with the proper alias
             if self.userParams[0] in featureList:
-                print(self.currentLoc.locFeatures[self.userParams[0]].featureDesc)
+                self.cursesWin.addstr(self.currentLoc.locFeatures[self.userParams[0]].featureDesc + "\n\n")
                 # Now we must activate the container if it has a secret container.
                 if self.currentLoc.locFeatures[self.userParams[0]].secretContainer == True:
                     self.currentLoc.locFeatures[self.userParams[0]].isContainer = True
@@ -424,26 +452,26 @@ class advEngEnv:
                 for key, value in itemAliasList.items():
                     if self.userParams[0] == value:
                         # if it's just in the location, you only get the description
-                        print(self.items[key].itemDesc)
+                        self.cursesWin.addstr(self.items[key].itemDesc + "\n\n")
 
             # this bit checks the items in the player inventory
             elif self.userParams[0] in invAliasList.values():
                 for key, value in invAliasList.items():
                     if self.userParams[0] == value:
                         # if you're holding the item, you can examine it closer and get the secret description
-                        print(self.items[key].itemDesc)
+                        self.cursesWin.addstr(self.items[key].itemDesc)
                         if self.items[key].itemSecret != "":
-                            print(self.items[key].itemSecret)
+                            self.cursesWin.addstr(self.items[key].itemSecret + "\n\n")
             
             # this bit checks the npcs in the location
             elif any(self.userParams[0] in value for value in npcAliasList.values()):
                 for key, value in npcAliasList.items():
                     if self.userParams[0] in value:
                         # if it's just in the location, you only get the description
-                        print(self.npcs[key].npcDesc)
+                        self.cursesWin.addstr(self.npcs[key].npcDesc + "\n\n")
 
             else:
-                print("I don't see that item here!")
+               self.cursesWin.addstr("I don't see that item here!\n\n")
     
     def playerInventory(self):
         
@@ -452,7 +480,7 @@ class advEngEnv:
         
         #print them out pretty
         for itemDetails in playerInventory.values():
-            print(itemDetails.itemName)
+            self.cursesWin.addstr(itemDetails.itemName)
 
     def playerGetItem(self):
 
@@ -460,9 +488,9 @@ class advEngEnv:
         aliasList = {} # create empty dict to store item aliases for later searching
 
         if len(self.userParams) == 0: # we gotta have some params
-            print("What would you like to get?")
+            self.cursesWin.addstr("What would you like to get?\n\n")
         elif len(self.userParams) > acceptedParams: # if there are too many params
-            print("I don't understand!")
+            self.cursesWin.addstr("I don't understand!\n\n")
         elif len(self.userParams) == 1: # single param means they want to get something from the room
              # pull all items in location 
             itemList = self.getItemsByLoc(self.player.locID)
@@ -475,10 +503,10 @@ class advEngEnv:
                 for key, value in aliasList.items():
                     if self.userParams[0] == value:
                         #  if the item exists in the location, change the location to inventory
-                        print(f"You pick up the {value}.")
+                        self.cursesWin.addstr(f"You pick up the {value}.\n\n")
                         self.items[key].itemLoc = "locInventory"
             else:
-                print("I don't see that item here!")
+                self.cursesWin.addstr("I don't see that item here!\n\n")
         elif self.userParams[1] == "from":
             itemList = self.getItemsByLoc(self.currentLoc.locFeatures[self.userParams[2]].featureID)
 
@@ -491,7 +519,7 @@ class advEngEnv:
                 for key, value in aliasList.items():
                     if self.userParams[0] == value:
                         #  if the item exists in the location, change the location to inventory
-                        print(f"You get the {value} from the {self.userParams[2]}.")
+                        self.cursesWin.addstr(f"You get the {value} from the {self.userParams[2]}.\n\n")
                         self.items[key].itemLoc = "locInventory"
         pass
 
@@ -508,9 +536,9 @@ class advEngEnv:
 
         # check and figure out the user input
         if len(self.userParams) > acceptedParams:
-            print("I don't understand!")
+            self.cursesWin.addstr("I don't understand!\n\n")
         elif len(self.userParams) == 0:
-            print("What would you like to get?")
+            self.cursesWin.addstr("What would you like to get?\n\n")
         else:
             # if we only have one parameter, continue
             if self.userParams[0] in aliasList.values():
@@ -518,10 +546,10 @@ class advEngEnv:
                 for key, value in aliasList.items():
                     if self.userParams[0] == value:
                         #  if the item exists in the location, change the location to inventory
-                        print(f"You drop the {value}.")
+                        self.cursesWin.addstr(f"You drop the {value}.\n\n")
                         self.items[key].itemLoc = self.player.locID
             else:
-                print("You don't have that item!")
+                self.cursesWin.addstr("You don't have that item!\n\n")
         pass
 
     def playerPutItem(self):
@@ -529,11 +557,11 @@ class advEngEnv:
         aliasList = {} # create empty dict to store item aliases for later searching
 
         if len(self.userParams) == 0: # we gotta have some params
-            print("What would you like to get?")
+           self.cursesWin.addstr("What would you like to get?\n\n")
         elif self.userParams[1] != "in": # if you're not putting something IN something
-            print("I don't understand") 
+            self.cursesWin.addstr("I don't understand!\n\n") 
         elif len(self.userParams) > acceptedParams: # if there are too many params
-            print("I don't understand!")
+            self.cursesWin.addstr("I don't understand!\n\n")
         else:
             itemList = self.getItemsByLoc('locInventory')
 
@@ -546,10 +574,17 @@ class advEngEnv:
                 for key, value in aliasList.items():
                     if self.userParams[0] == value:
                         #  if the item exists in the location, change the location to inventory
-                        print(f"You put the {value} in the {self.userParams[2]}.")
+                        self.cursesWin.addstr(f"You put the {value} in the {self.userParams[2]}.\n\n")
                         self.items[key].itemLoc = self.currentLoc.locFeatures[self.userParams[2]].featureID
 
         pass
+    
+    ###############################     
+    ### THIS IS THE NPC SECTION ###
+    ###############################
+
+    ## Here we would create functions for each NPC, what they do, etc...
+
 
 
         
