@@ -1,4 +1,5 @@
 def npcID_1(npcObj, window, event, stopEvent):
+    # Reginald Kensington
     while not stopEvent.is_set():
         window.addstr("test npc 1\n\n")
         event.wait(5)
