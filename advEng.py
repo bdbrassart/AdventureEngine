@@ -2,6 +2,7 @@
 import json
 import string
 import curses
+import threading
 # Collection of classes for "Adventure Engine"
 # please use camelcase
 
@@ -120,8 +121,16 @@ class advEngEnv:
     locations: dict
     npcs: dict
     cursesWin: curses
+    allNpcThreads: list
+    event: threading.Event
+    stopEvent: threading.Event
 
     def __init__(self, player, locations, items, npcs, cursesWin):
+        # Events and other vars for NPC threading
+        self.stopEvent = threading.Event()
+        self.event = threading.Event()
+        self.allNpcThreads = [] # list of threads for later closing
+
         # Load the player
         self.player = player
         
@@ -133,7 +142,7 @@ class advEngEnv:
 
         # Load the npc files
         self.npcs = self.loadNpcs(npcs)
-
+        
         # Set the curses window for display
         self.cursesWin = cursesWin
 
@@ -157,8 +166,15 @@ class advEngEnv:
         }
 
         # Define our curses color pairs
-        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE) # header color
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK) # header color
         curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK) 
+
+        # Start the NPC threads
+        for npcID in self.npcs.keys():
+            npcFunction = getattr(self, npcID, None)
+            npcThread = threading.Thread(target=npcFunction, args=(npcID,))
+            npcThread.start()
+            self.allNpcThreads.append(npcThread)      
 
     def __getstate__(self):
         # return a dict of class variables to include in save
@@ -300,14 +316,14 @@ class advEngEnv:
     
     def loadNpcs(self, jsonFile):
 
-        # Create the list variable to hold the location objects
+        # Create the list variable to hold the npc objects
         envNpcs = {}
 
         # Load the locations files
         with open(jsonFile, 'r') as file:
             npcs = json.load(file)
 
-        # iterate thru the provided locations and create the list of location items
+        # iterate thru the provided locations and create the list npcs
         for npcID, npcDetails in npcs.items():
             npc = npChar(npcDetails)
             envNpcs[npcID] = npc
@@ -579,11 +595,27 @@ class advEngEnv:
 
         pass
     
-    ###############################     
-    ### THIS IS THE NPC SECTION ###
-    ###############################
+    ##################
+    ### NPC Actions ###
+    ##################
+    ## Here we create functions for each NPC, what they do, etc...
 
-    ## Here we would create functions for each NPC, what they do, etc...
+    def npcID_1(self, npcID):
+        # Reginald Kensington
+        while not self.stopEvent.is_set(): 
+            if self.player.locID == self.npcs[npcID].npcLoc:
+                self.cursesWin.addstr("Reginald says ", curses.color_pair(2))
+                self.cursesWin.addstr(f"Good evening, {self.player.name}, how may I be of service today?\n\n")
+                self.event.wait(5)           
+            else:
+                pass
+
+    def npcID_2(self, npcID):
+        while not self.stopEvent.is_set():
+            if self.player.locID == self.npcs[npcID].npcLoc:
+                self.cursesWin.addstr("I'm the valet.\n\n")
+            self.event.wait(3)
+            self.cursesWin.refresh()
 
 
 

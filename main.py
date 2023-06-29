@@ -1,9 +1,6 @@
 from advEng import *
 import pickle
-import time
-import threading
 import curses
-import npcActions
 
 def main(stdscr):
 
@@ -81,23 +78,10 @@ def main(stdscr):
     # Clear the output before the main loop starts
     outputWin.clear()
     outputWin.refresh()
-    
-    # Initialize NPC threads and set some threading variables
-    stopEvent = threading.Event()
-    event = threading.Event()
 
-    # Inital look
+    # Inital look and move trigger
     worldEnv.playerLook()
     outputWin.refresh()
-
-    ## NPC threads are defined in npcActions.py.  We need to loop through each NPC and start their thread.
-    allNpcThreads = [] # list of threads for later closing
-    for npcID, npcDetails in worldEnv.npcs.items():
-        
-        npcFunction = getattr(npcActions, npcID, None)
-        npcThread = threading.Thread(target=npcFunction, args=(npcDetails,outputWin,event,stopEvent))
-        npcThread.start()
-        allNpcThreads.append(npcThread)
 
     # Main loop
     
@@ -131,14 +115,14 @@ def main(stdscr):
             command()
         elif userCmd.lower() == "exit":
             # Stop threads
-            stopEvent.set()
+            worldEnv.stopEvent.set()
 
             # Notify player
             outputWin.addstr("Killing background threads... \n\n")
             outputWin.refresh()
 
             # Join all NPC threads
-            for thread in allNpcThreads:
+            for thread in worldEnv.allNpcThreads:
                 thread.join()
 
             # Save Prompt
