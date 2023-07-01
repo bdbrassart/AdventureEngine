@@ -141,7 +141,8 @@ def main(stdscr):
         elif userCmd == "":
             pass
         else:
-            print("Command not found!")
+            outputWin.addstr("Command not found\n\n")
+            outputWin.refresh()
 
         # Refresh both windows to update screen
         outputWin.refresh()

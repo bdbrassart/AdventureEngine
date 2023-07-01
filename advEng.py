@@ -162,12 +162,15 @@ class advEngEnv:
             "inventory": self.playerInventory,
             "get": self.playerGetItem,
             "drop": self.playerDropItem,
-            "put": self.playerPutItem
+            "put": self.playerPutItem,
+            "say": self.playerSay
         }
 
         # Define our curses color pairs
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK) # header color
         curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK) 
+        curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK) 
+        curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK) 
 
         # Start the NPC threads
         for npcID in self.npcs.keys():
@@ -594,6 +597,17 @@ class advEngEnv:
                         self.items[key].itemLoc = self.currentLoc.locFeatures[self.userParams[2]].featureID
 
         pass
+
+    def playerSay(self):
+        # Player speaking to the room
+        ## Format speech (everything AFTER say command)
+        speech = ' '.join(self.userParams) # join all the params as a string
+        speech = speech.capitalize() + ".\n\n"# capitalize the first letter
+    
+        #output the speech to the window
+        self.cursesWin.addstr("You say ", curses.color_pair(3))
+        self.cursesWin.addstr(speech)
+
     
     ##################
     ### NPC Actions ###
