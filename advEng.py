@@ -415,14 +415,19 @@ class advEngEnv:
         # Calculate the adjacent locations from locations data
         adjLocs = self.locations[self.player.locID].locExits
 
-        # Determine the destination locID from the input direction
-        destLoc = adjLocs[0][self.userCmd]
-      
-        # Set the players new location
-        self.player.locID = destLoc
-    
-        # Look around
-        self.playerLook()
+        if self.userCmd in adjLocs[0].keys():
+
+            # Determine the destination locID from the input direction
+            destLoc = adjLocs[0][self.userCmd]
+
+            # Set the players new location
+            self.player.locID = destLoc
+
+            # Look around
+            self.playerLook()
+        
+        else:
+            self.cursesWin.addstr("You cannot go that way!\n\n")
     
     def examine(self): 
         # We can examine features, location items, and inventory items.
