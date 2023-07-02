@@ -11,6 +11,7 @@ class mainChar:
     race: str
     hpTotal: int
     hpCurr: int
+    spokenWords: str
 
     def __init__(self, name, race):
         self.name = name
@@ -18,6 +19,7 @@ class mainChar:
         self.hpTotal = 20
         self.hpCurr = 20
         self.locID = "locID_1"
+        self.spokenWords = ""
     
     def print(self):
         print("Name: " + self.name)
@@ -607,11 +609,13 @@ class advEngEnv:
         # Player speaking to the room
         ## Format speech (everything AFTER say command)
         speech = ' '.join(self.userParams) # join all the params as a string
-        speech = speech.capitalize() + ".\n\n"# capitalize the first letter
-    
+        speech = speech.capitalize() # capitalize the first letter
+        self.player.spokenWords = speech # stores most recently spoken words, for checking in npc loops for dialog interraction
+
         #output the speech to the window
         self.cursesWin.addstr("You say ", curses.color_pair(3))
         self.cursesWin.addstr(speech)
+        self.cursesWin.addstr(".\n\n")
 
     
     ##################
@@ -621,11 +625,17 @@ class advEngEnv:
 
     def npcID_1(self, npcID):
         # Reginald Kensington
-        while not self.stopEvent.is_set(): 
-            if self.player.locID == self.npcs[npcID].npcLoc:
-                self.cursesWin.addstr("Reginald says ", curses.color_pair(2))
-                self.cursesWin.addstr(f"Good evening, {self.player.name}, how may I be of service today?\n\n")
-                self.event.wait(5)           
+        while not self.stopEvent.is_set(): # we run this loop as long as the stop event isn't set (quitting the game)
+            if self.player.locID == self.npcs[npcID].npcLoc: # if the player is in the NPC's location
+                # This waits until the player says "hello"
+                while not ("hello" in self.player.spokenWords or self.stopEvent.is_set()): 
+                    if self.stopEvent.is_set(): # this interrupts if we quit
+                        pass
+                    elif "hello" in self.player.spokenWords.lower(): # This is what we do if the player says hello
+                        self.cursesWin.addstr("Reginald says ", curses.color_pair(2))
+                        self.cursesWin.addstr(f"Good evening, {self.player.name}.\n\n")
+                        self.player.spokenWords = "" # we must reset the spokenWords, or else we just keep repeating this while loop
+                        pass    
             else:
                 pass
 
