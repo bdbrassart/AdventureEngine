@@ -3,7 +3,7 @@
         {
             "locID": "locID_1",
             "locTitle": "The Grand Foyer",
-            "locDesc": "Stepping into the foyer of your ancestral manor, a sense of awe washes over you. Exquisite craftsmanship adorns the space, from the intricately carved wooden door to the sweeping staircase that curves gracefully upward. Sunlight streams through stained glass windows, casting colorful patterns on the marble floors. The air is filled with the subtle fragrance of fresh flowers arranged on an antique console table, and a gleaming crystal chandelier bathes the foyer in a warm, ethereal glow. Reflecting in the ornate mirrors, you can't help but feel a connection to the generations that have come before you, as the foyer stands as a testament to the timeless elegance and grandeur of your family's legacy.",
+            "locDesc": "Stepping into the foyer of your ancestral manor, a sense of awe washes over you. Exquisite craftsmanship adorns the space, from the intricately carved wooden door to the sweeping staircase that curves gracefully upward. Sunlight streams through stained glass windows, casting colorful patterns on the marble floors. The air is filled with the subtle fragrance of fresh flowers arranged on an antique console table next to a small sign, and a gleaming crystal chandelier bathes the foyer in a warm, ethereal glow.  Reflecting in the ornate mirrors, you can't help but feel a connection to the generations that have come before you, as the foyer stands as a testament to the timeless elegance and grandeur of your family's legacy.",
             "locFeatures": [
                 {
                     "flowers": [
@@ -27,6 +27,14 @@
                             "featureID": "featID_3",
                             "featureDesc": "An elegent, Queen Anne style console table with a small drawer on the front.",
                             "isContainer": true,
+                            "secretContainer": false     
+                        }
+                    ],
+                    "sign": [
+                        {
+                            "featureID": "featID_4",
+                            "featureDesc": "The small sign on the console table reads: Say hello to Reginald, the butler.",
+                            "isContainer": false,
                             "secretContainer": false     
                         }
                     ]

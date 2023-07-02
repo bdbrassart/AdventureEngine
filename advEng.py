@@ -632,6 +632,7 @@ class advEngEnv:
                     if self.stopEvent.is_set(): # this interrupts if we quit
                         pass
                     elif "hello" in self.player.spokenWords.lower(): # This is what we do if the player says hello
+                        self.event.wait(1)
                         self.cursesWin.addstr("Reginald says ", curses.color_pair(2))
                         self.cursesWin.addstr(f"Good evening, {self.player.name}.\n\n")
                         self.player.spokenWords = "" # we must reset the spokenWords, or else we just keep repeating this while loop
